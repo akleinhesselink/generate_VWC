@@ -3,7 +3,6 @@
 # -- select covariates -------------------------------------------------------------------#
 args = commandArgs(trailingOnly=TRUE)
 
-#args <- c('HECO', 'recruitment', 'data/temp_data') # for testing 
 #args <- c('data/SW_files/sw_output.RData', 'data/climate/daily_VWC.csv')
 
 if (length(args)!=2) {
@@ -22,15 +21,20 @@ if (length(args)!=2) {
 #### BEWARE - there are empty or defenct 'slots'. Do not be alarmed
 library(DBI)
 library(RSQLite)
-# If necessary install Rsoilwat31 from local library: 
-# packrat::install_local('Rsoilwat31')
-# Or if necessary install from GitHub: 
-# system2(command = "git", args = "clone -b master --single-branch --recursive https://github.com/Burke-Lauenroth-Lab/Rsoilwat.git Rsoilwat")
-# Then checkout version 1.1.4 
-# system('cd Rsoilwat; git checkout tags/v1.1.4;')
-# install the package 
-# tools::Rcmd(args = paste("INSTALL Rsoilwat"))
-library(Rsoilwat31) 
+
+if( !'Rsoilwat31' %in% installed.packages() ) { 
+  # If necessary install Rsoilwat31 from local library: 
+  packrat::install_local('Rsoilwat31')
+  
+  # Alternatively install v31 from GitHub: 
+  # system2(command = "git", args = "clone -b master --single-branch --recursive https://github.com/Burke-Lauenroth-Lab/Rsoilwat.git Rsoilwat")
+  # Then checkout version 1.1.4 
+  # system('cd Rsoilwat; git checkout tags/v1.1.4;')
+  # install the package 
+  # tools::Rcmd(args = paste("INSTALL Rsoilwat"))
+}
+
+require(Rsoilwat31) 
 
 #Step 1 - Set working directory
 #dir.prj <- soilwat_dir

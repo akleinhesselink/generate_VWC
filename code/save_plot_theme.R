@@ -17,7 +17,6 @@ my_theme <-
 # orange drought 
 # blue  irrigation 
 
-
 my_colors <- c('black', '#1b9e77', '#d95f02', '#7570b3') 
 
 species_names <- c(bquote( italic('A. tripartita')), bquote(italic('H. comata')), bquote(italic('P. secunda')), bquote(italic('P. spicata')))

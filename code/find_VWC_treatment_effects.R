@@ -41,9 +41,9 @@ spotVWC <- read.csv(spot_vwc_file)
 load(plot_theme)
 
 # output directories and files -------------------------------------------- # 
-clim_dir <- dirname(season_tab)
+clim_dir <- dirname(daily_vwc_file)
 fig_dir <- dirname(plot_theme)
-statsOutput <- 'manuscript/soil_moisture_model.tex'
+statsOutput <- 'data/temp_data/soil_moisture_model.tex'
 
 # --------------------------------------------------------------------------------------#
 myVWC <- myVWC %>% 
@@ -178,12 +178,12 @@ plot_df <- merge( everyday, plot_df, all.x = T)
 
 plot_df <- plot_df %>% mutate( julian_date = as.numeric(strftime( simple_date, '%j')), year = as.numeric( strftime( simple_date, '%Y'))) 
 
-ggplot( plot_df, aes( x = julian_date, y = VWC, color = Treatment, linetype = type, alpha = type )) + 
-  geom_line() + 
-  facet_grid( year ~ . ) + 
-  scale_color_manual(values = my_colors[2:4]) + 
-  scale_linetype_manual(values = c(2,1)) + 
-  scale_alpha_manual(values = c(1, 0.7)) + 
+ggplot( plot_df, aes( x = julian_date, y = VWC, color = Treatment, linetype = type, alpha = type )) +
+  geom_line() +
+  facet_grid( year ~ . ) +
+  scale_color_manual(values = my_colors[2:4]) +
+  scale_linetype_manual(values = c(2,1)) +
+  scale_alpha_manual(values = c(1, 0.7)) +
   my_theme
 
 png(file.path(fig_dir, 'avg_daily_soil_moisture.png'), 

@@ -71,8 +71,10 @@ calib <-
 m1 <- lm( data = calib, VWC_true ~ poly(VWC, 1))
 summary(m1)
 
-
-ggplot( data = calib, aes( x = VWC, y = VWC_true)) + geom_point() + geom_smooth(method = 'lm', formula = 'y ~ poly(x, 1)') + xlim( 0, 35) + ylim(0,35)
+ggplot( data = calib, aes( x = VWC, y = VWC_true)) + 
+  geom_point() + 
+  geom_smooth(method = 'lm', formula = 'y ~ poly(x, 1)') + 
+  xlim( 0, 35) + ylim(0,35)
 
 predict(m1, newdata = data.frame(VWC = 0))
 
@@ -99,8 +101,6 @@ plot_by_group <-
   geom_boxplot( ) + 
   facet_wrap(~PrecipGroup)
 
-plot_by_group
-
 plot_by_date + ggtitle( 'Spot measurements')
 
 # analysis -------------------------------------------------------------------------------------------------------------
@@ -124,7 +124,7 @@ aggregate(data = df, VWC ~ Treatment, FUN = 'mean')
 # make table for stats output 
 library(xtable)
 library(lsmeans)
-statsOutput <- 'manuscript/spot_measurements.tex'
+statsOutput <- 'data/temp_data/spot_measurements.tex'
 
 test <- lsmeans(spot_m , "Treatment" )
 

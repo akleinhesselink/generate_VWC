@@ -15,16 +15,18 @@ library(lme4)
 library(zoo)
 library(stringr)
 
+
 args = commandArgs(trailingOnly=TRUE)
 
 # test if there is at least one argument: if not, return an error
-if (length(args)!=3) {
-  stop("Supply location of 'driversdata' directory, season table, and plot theme", call.=FALSE)
-} else if (length(args)==3) {
+if (length(args)!=4) {
+  stop("Supply location of 'driversdata' directory, season table, and plot theme and output dir", call.=FALSE)
+} else if (length(args)==4) {
   # default output file
   input_dir <- args[1]
   season_tab <- args[2]
   figure_theme <- args[3]
+  output_dir <- args[4]
 }
 
 # ----- read in drivers data data ------------------------------------------------------------#
@@ -37,9 +39,6 @@ station_dat <- read.csv(file.path(dataDir1, 'USSES_climate_monthly_new.csv'))
 # ----- local data -------------------------------------------- # 
 load(figure_theme)
 season <- read.csv(season_tab)
-
-# output dir------------------ 
-climate_dir <- dirname(season_tab)
 
 # --------------------------------------------------------------- # 
 
@@ -149,7 +148,6 @@ mydata <- month_t[, 2:13]
 mydata <- mydata[complete.cases(mydata), ]
 pca <- princomp(mydata)
 biplot(pca)
-
 # ------------ aggregate monthly climate with Treatment effects by quarter ---------------#
 
 quarterly_clim <-
@@ -248,13 +246,13 @@ monthly_from_daily <-
 plot(data = subset(seasonal_clim, var == 'TAVG_avg' & Treatment == 'Control' & season == 'summer'), val ~ year)
 plot(data = subset(seasonal_clim, var == 'TAVG_avg' & Treatment == 'Control' & season == 'fall'), val ~ year)
 
-write.csv( seasonal_clim, file.path( climate_dir, 'seasonal_climate.csv'), row.names = F)
-write.csv( monthly_clim, file.path( climate_dir, 'monthly_climate.csv'), row.names = F) 
-write.csv( quarterly_clim, file.path( climate_dir, 'quarterly_climate.csv'), row.names = F)
-write.csv( annual_clim, file.path( climate_dir, 'annual_climate.csv'), row.names = F)
+write.csv( seasonal_clim, file.path( output_dir, 'seasonal_climate.csv'), row.names = F)
+write.csv( monthly_clim, file.path( output_dir, 'monthly_climate.csv'), row.names = F) 
+write.csv( quarterly_clim, file.path( output_dir, 'quarterly_climate.csv'), row.names = F)
+write.csv( annual_clim, file.path( output_dir, 'annual_climate.csv'), row.names = F)
 
 # what was this for? 
-# write.csv(monthly_clim %>% arrange( year, month) %>% rename(TPPT = PRCP, TMEAN = TAVG), file.path( climate_dir, 'monthly_climate.csv'), row.names = FALSE)
+# write.csv(monthly_clim %>% arrange( year, month) %>% rename(TPPT = PRCP, TMEAN = TAVG), file.path( output_dir, 'monthly_climate.csv'), row.names = FALSE)
 
-write.csv(monthly_from_daily, file.path( climate_dir, 'monthly_climate_from_from_daily.csv'), row.names = FALSE)
+write.csv(monthly_from_daily, file.path( output_dir, 'monthly_climate_from_from_daily.csv'), row.names = FALSE)
 
