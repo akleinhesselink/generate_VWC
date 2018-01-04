@@ -1,2 +1,4 @@
-# precip_prediction
-Prediction of precipitation effects on plant demography
+# Generate VWC
+Generate soil volumetric water content estimates for drought 
+shelter and irrigation experiment at the US Sheep Experiment
+Station in Dubois, ID. 
