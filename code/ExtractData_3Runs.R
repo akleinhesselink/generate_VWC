@@ -1,17 +1,7 @@
 #!/usr/bin/env Rscript
 
-# -- select covariates -------------------------------------------------------------------#
-args = commandArgs(trailingOnly=TRUE)
-
-#args <- c('data/SW_files/sw_output.RData', 'data/climate/daily_VWC.csv')
-
-if (length(args)!=2) {
-  stop("Supply name of soilwat data file and output filename", call.=FALSE)
-} else if (length(args)==2) {
-  # default output file
-  soilwat_file <- args[1]
-  out_file <- args[2]
-}
+soilwat_file <- 'data/SW_files/sw_output.RData' # input data sent by Bradford Lab 
+out_file <- 'data/temp_data/daily_VWC.csv'
 
 #This is a R script on how to extract data from the 3_Runs Folder
 #The 3_Runs folder holds numerous subfolders - one for each site

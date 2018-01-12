@@ -8,12 +8,15 @@ ARCHIVE_FILE=precip_prediction.tar.gz
 CLIMATE=$(DATA)/climate
 TEMP=$(DATA)/temp_data
 ARCHIVE=$(subst .tar.gz,_archive, $(ARCHIVE_FILE))
+LIB=lib
+USSES_CLIM=$(LIB)/USSES_climate
 
 # Input files
-DAILY_VWC_FILE=$(TEMP)/daily_VWC.csv
-SEASON_FILE=$(CLIMATE)/season_table.csv
+SEASON_FILE=$(USSES_CLIM)/season_table.csv
 SW_DATA=$(DATA)/SW_files/sw_output.RData
+DAILY_VWC_FILE=$(TEMP)/daily_VWC.csv
 CLIM_FIGS:=$(FIGS)/VWC_spot_measurements.png
+
 
 # Get climate scripts 
 EXTRACT_SW_SRC=$(CODE)/ExtractData_3Runs.R

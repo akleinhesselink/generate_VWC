@@ -11,24 +11,18 @@ library(lme4)
 library(zoo)
 library(MASS)
 
-args = commandArgs(trailingOnly=TRUE)
+INPUT_DIR <- "lib/USSES_climate/data"
+daily_vwc_file <- "data/temp_data/daily_VWC.csv"
 
-# test if there is at least one argument: if not, return an error
-if (length(args)!=3) {
-  stop("Supply location of 'driversdata' directory, season table and daily_VWC file", call.=FALSE)
-} else if (length(args)==3) {
-  # default output file
-  drivers_dir <- args[1]
-  season_tab <- args[2]
-  daily_vwc_file <- args[3]
-}
+out_file <- "data/temp_data/spot_VWC.csv"
 
-dataDir1 <- file.path(drivers_dir, 'data', 'idaho_modern', 'soil_moisture_data', 'data', 'processed_data')
+season_tab <- file.path(INPUT_DIR, 'season_table.csv')
+daily_clim <- readRDS(file.path(INPUT_DIR, 'processed_soil_data', 'daily_station_dat_rainfall.RDS'))
+spotVWC <- readRDS(file.path(INPUT_DIR, 'processed_soil_data', 'spring_spot_measurements.RDS'))
 
 # import soil moisture and climate data from driversdata
 #myVWC <- readRDS(file.path(dataDir1, 'decagon_data_with_station_data.RDS'))
-daily_clim <- readRDS(file.path(dataDir1, 'daily_station_dat_rainfall.RDS'))
-spotVWC <- readRDS(file.path(dataDir1, 'spring_spot_measurements.RDS'))
+
 
 # local project data ----------------------------------------------------- # 
 seasons <- read.csv(season_tab)
@@ -63,4 +57,4 @@ spotVWC <- merge( spotVWC, spot_weights)
 
 spotVWC <- spotVWC %>% mutate( simple_date = date ) 
 
-write.csv(spotVWC, file.path( climate_dir, 'spot_VWC.csv'), row.names = F)
+write.csv(spotVWC, out_file, row.names = F)
