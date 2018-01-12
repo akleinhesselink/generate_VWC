@@ -26,7 +26,7 @@ if (length(args)!=3) {
 dataDir1 <- file.path(drivers_dir, 'data', 'idaho_modern', 'soil_moisture_data', 'data', 'processed_data')
 
 # import soil moisture and climate data from driversdata
-myVWC <- readRDS(file.path(dataDir1, 'decagon_data_with_station_data.RDS'))
+#myVWC <- readRDS(file.path(dataDir1, 'decagon_data_with_station_data.RDS'))
 daily_clim <- readRDS(file.path(dataDir1, 'daily_station_dat_rainfall.RDS'))
 spotVWC <- readRDS(file.path(dataDir1, 'spring_spot_measurements.RDS'))
 
