@@ -1,0 +1,3 @@
+[submodule "lib/USSES_climate"]
+	path = lib/USSES_climate
+	url = https://github.com/akleinhesselink/USSES_climate.git
