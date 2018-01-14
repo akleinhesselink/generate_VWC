@@ -1,5 +1,4 @@
 #!/usr/bin/env Rscript
-
 # calculate treatment effects compared to control soil moisture 
 
 rm(list = ls()) 
@@ -10,40 +9,29 @@ library(dplyr)
 library(lme4)
 library(zoo)
 library(lsmeans)
+library(lmerTest)
 library(texreg)
 library(xtable)
 library(MASS)
 
-args = commandArgs(trailingOnly=TRUE)
-
-# test if there is at least one argument: if not, return an error
-if (length(args)!=5) {
-  stop("Supply location of 'driversdata' directory, season table, daily_VWC, spot_VWC and plot_theme", call.=FALSE)
-} else if (length(args)==5) {
-  # default output file
-  drivers_dir <- args[1]
-  season_tab <- args[2]
-  daily_vwc_file <- args[3]
-  spot_vwc_file <- args[4]
-  plot_theme <- args[5]
-}
-
-dataDir1 <- file.path(drivers_dir, 'data', 'idaho_modern', 'soil_moisture_data', 'data', 'processed_data')
+dataDir1 <- 'lib/USSES_climate/data'
 
 # import drivers data climate and soil moisture data 
-myVWC <- readRDS(file.path(dataDir1, 'decagon_data_with_station_data.RDS'))
-daily_clim <- readRDS(file.path(dataDir1, 'daily_station_dat_rainfall.RDS'))
+myVWC <- readRDS(file.path(dataDir1, 'processed_soil_data', 'decagon_data_with_station_data.RDS'))
+daily_clim <- readRDS(file.path(dataDir1, 'processed_soil_data', 'daily_station_dat_rainfall.RDS'))
 
 # local climate data ---------------------------------------------------- 
-seasons <- read.csv(season_tab)
-swVWC <- read.csv(daily_vwc_file)
-spotVWC <- read.csv(spot_vwc_file)
-load(plot_theme)
+seasons <- read.csv(file.path(dataDir1, 'season_table.csv'))
+swVWC <- read.csv(file.path( 'data', 'temp_data', 'daily_VWC.csv'))
+spotVWC <- read.csv(file.path('data', 'temp_data', 'spot_VWC.csv'))
+
+# plotting theme ----------------------------------------------------------- 
+load(file.path( 'figures', 'my_plotting_theme.Rdata'))
 
 # output directories and files -------------------------------------------- # 
-clim_dir <- dirname(daily_vwc_file)
-fig_dir <- dirname(plot_theme)
-statsOutput <- 'data/temp_data/soil_moisture_model.tex'
+clim_dir <- file.path( 'data', 'temp_data')
+fig_dir <- 'figures'
+statsOutput <- file.path( 'data', 'temp_data', 'soil_moisture_model.tex')
 
 # --------------------------------------------------------------------------------------#
 myVWC <- myVWC %>% 
@@ -114,14 +102,16 @@ summary(mTreatment)
 mTreatment <- lmer(update(formula(mTreatment) , . ~ . + (1|simple_date) + (1|PrecipGroup)), data = VWC_test, weights = VWC_test$weight)
 summary(mTreatment)
 
-test <- lsmeans(mTreatment,  ~ Treatment + season + rainfall)
+test <- lsmeans::lsmeans(mTreatment,  ~ Treatment + season + rainfall)
 #test <- lsm(mTreatment, ~ Treatment + season + rainfall )
 
 tab <- summary(test)
 
 tab <-  data.frame(tab)
 
-tab <- as.data.frame(tab) %>%  dplyr::select(season, rainfall,  Treatment, lsmean, SE, asymp.LCL, asymp.UCL ) %>% arrange(season, rainfall, Treatment )
+tab <- as.data.frame(tab) %>%  
+  dplyr::select(season, rainfall,  Treatment, lsmean, SE, lower.CL, upper.CL ) %>% 
+  arrange(season, rainfall, Treatment )
 
 texreg(mTreatment,caption="Treatment effects on soil moisture. Intercept refers to drought effects in fall not rainy conditions.  Model fit to the continuously logged soil moisture data as well as the spot measurements collected from all plots in the spring.",
        caption.above=TRUE,file=statsOutput, label = 'table:soil_moisture_model')

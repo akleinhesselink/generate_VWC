@@ -20,13 +20,14 @@ SW_DAT=$(DATA)/SW_files/sw_output.RData
 # Output files
 DAILY_VWC_FILE=$(TEMP)/daily_VWC.csv
 SPOT_VWC_FILE=$(TEMP)/spot_VWC.csv
+DAILY_SW_TREAT_FILE=$(TEMP)/daily_SOILWAT_VWC_treatments.csv
 
 CLIM_FIGS:=$(FIGS)/VWC_spot_measurements.png
-
 
 # Get climate scripts 
 EXTRACT_SW_SRC=$(CODE)/ExtractData_3Runs.R
 GET_SPOT_SRC=$(CODE)/get_spot_VWC.R
+FIND_VWC_TREAT_SRC=$(CODE)/find_VWC_treatment_effects.R
 
 # Plot scripts 
 PLOT_THEME_FILE=$(FIGS)/my_plotting_theme.Rdata
@@ -48,16 +49,14 @@ PLOT_THEME_SRC=$(CODE)/save_plot_theme.R
 #$(VWC_FILES): $(DAILY_SW_TREAT_FILE) $(PLOT_THEME_FILE) $(AGGREGATE_VWC_SRC) 
 #	./$(AGGREGATE_VWC_SRC) $(wordlist 1,2, $^)
 	
-#$(DAILY_SW_TREAT_FILE): $(VWC_TREAT_SRC) $(DRIVERS) $(SEASONS) $(DAILY_VWC_FILE) $(SPOT_VWC_FILE) $(PLOT_THEME_FILE)
-#	./$< $(wordlist 2, $(words $^),$^)
+$(DAILY_SW_TREAT_FILE): $(FIND_VWC_TREAT_SRC) $(SEASONS) $(DAILY_VWC_FILE) $(SPOT_VWC_FILE) $(PLOT_THEME_FILE)
+	./$< 
 
 $(SPOT_VWC_FILE): $(GET_SPOT_SRC) $(SEASONS) $(STATION_DAT) $(SPOT_DAT) $(DAILY_VWC_FILE)
 	./$< 
 
 $(DAILY_VWC_FILE): $(EXTRACT_SW_SRC) $(SW_DAT)
 	./$<
-
-#$(SEASONS) $(STATION_DAT) $(SPOT_DAT): get_clim
 
 .PHONY: get_clim
 get_clim: 
