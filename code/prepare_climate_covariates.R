@@ -13,21 +13,13 @@ library(tidyr)
 library(ggplot2)
 library(zoo)
 
-args = commandArgs(trailingOnly=TRUE)
-
-# test if there is at least one argument: if not, return an error
-if (length(args)!=2) {
-  stop("Supply seasonal climate file and seasonal VWC file", call.=FALSE)
-} else if (length(args)==2) {
-  # default output file
-  seasonal_clim <- args[1]
-  seasonal_VWC  <- args[2]
-}
+seasonal_clim_fl <- file.path('data/temp_data/seasonal_climate.csv')
+seasonal_vwc_fl <- file.path('data/temp_data/seasonal_VWC.csv')
 
 # ------- load files ------------------------------------------------------------------ 
-clim_dir <- dirname( seasonal_clim)
-seasonal_clim <- read.csv(seasonal_clim)
-seasonal_VWC  <- read.csv(seasonal_VWC)
+temp_dir <- dirname(seasonal_clim_fl)
+seasonal_clim <- read.csv(seasonal_clim_fl)
+seasonal_VWC  <- read.csv(seasonal_vwc_fl)
 # ------ calculate seasonal lags -----------------------------------------------------# 
 #
 #   Variable names follow these conventions: 
@@ -82,7 +74,7 @@ q_VWC <-
          #VWC.a.0 = lag( VWC.a.1,4), 
          #VWC.a.l = lag( VWC.a.0,4)) %>%
   filter( season == 'spring') %>% # plants are measured at the end of spring each year 
-  select( Treatment, Period, year, season, starts_with("VWC")) %>%
+  dplyr::select( Treatment, Period, year, season, starts_with("VWC")) %>%
   ungroup() %>% 
   gather( var, val, starts_with('VWC')) %>% 
   filter( !is.na(val)) %>%
@@ -104,7 +96,7 @@ q_precip <-
          P.su.0 = lag(P.su.1, 4), 
          P.su.l = lag(P.su.0, 4)) %>% 
   filter( season == 'spring') %>% # plants are measured at the end of spring each year 
-  select( Treatment, Period, year, season, starts_with("P"))
+  dplyr::select( Treatment, Period, year, season, starts_with("P"))
 
 q_temp <- 
   seasonal_clim %>% 
@@ -124,7 +116,7 @@ q_temp <-
           T.w.0 = lag(T.w.1, 4), 
           T.w.l = lag(T.w.0, 4)) %>% 
   filter( season == 'spring') %>% 
-  select( Treatment, Period, year, season, starts_with("T."))
+  dplyr::select( Treatment, Period, year, season, starts_with("T."))
 
 allClim <- 
   q_precip %>% 
@@ -148,5 +140,5 @@ allClim$year <- allClim$year - 1 # adjust to match assignment of year 0 as the r
 # 
 # ---- output ----------------------------------------------------------------------------# 
 
-write.csv( data.frame( allClim ) , file.path( clim_dir , 'prepped_clim_vars.csv'), row.names = F)
+write.csv( data.frame( allClim ) , file.path( temp_dir , 'prepped_clim_vars.csv'), row.names = F)
 
