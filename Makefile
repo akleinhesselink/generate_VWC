@@ -16,12 +16,14 @@ SEASONS=$(USSES_CLIM)/data/season_table.csv
 STATION_DAT=$(USSES_CLIM)/data/processed_soil_data/daily_station_dat_rainfall.RDS
 SPOT_DAT=$(USSES_CLIM)/data/processed_soil_data/spring_spot_measurements.RDS
 SW_DAT=$(DATA)/SW_files/sw_output.RData
+USSES_CLIM_FILES=$(USSES_CLIM)/data/climate/*
 
 # Output files
 DAILY_VWC_FILE=$(TEMP)/daily_VWC.csv
 SPOT_VWC_FILE=$(TEMP)/spot_VWC.csv
 DAILY_SW_TREAT_FILE=$(TEMP)/daily_SOILWAT_VWC_treatments.csv
 VWC_FILES=$(TEMP)/quarterly_VWC.csv $(TEMP)/seasonal_VWC.csv $(TEMP)/annual_VWC.csv
+CLIM_FILES=$(TEMP)/quarterly_climate.csv $(TEMP)/seasonal_climate.csv $(TEMP)/monthly_climate.csv $(TEMP)/annual_climate.csv $(TEMP)/monthly_climate_from_daily.csv
 
 # Output figures 
 CLIM_FIGS:=$(FIGS)/VWC_spot_measurements.png
@@ -31,6 +33,7 @@ EXTRACT_SW_SRC=$(CODE)/ExtractData_3Runs.R
 GET_SPOT_SRC=$(CODE)/get_spot_VWC.R
 FIND_VWC_TREAT_SRC=$(CODE)/find_VWC_treatment_effects.R
 AGGREGATE_VWC_SRC=$(CODE)/aggregate_VWC_data.R
+MAKE_CLIM_VARS_SRC=$(CODE)/make_climate_variables.R
 
 # Plot scripts 
 PLOT_THEME_FILE=$(FIGS)/my_plotting_theme.Rdata
@@ -46,8 +49,8 @@ PLOT_THEME_SRC=$(CODE)/save_plot_theme.R
 #$(PREPPED_CLIM_FILE): $(TEMP)/seasonal_climate.csv $(TEMP)/seasonal_VWC.csv $(PREP_CLIM_VARS_SRC)
 #	./$(PREP_CLIM_VARS_SRC) $(wordlist 1,2, $^) 
 
-#$(CLIM_FILES): $(DRIVERS) $(SEASONS) $(PLOT_THEME_FILE) $(TEMP) $(MAKE_CLIM_VARS_SRC) 
-#	./$(MAKE_CLIM_VARS_SRC) $(wordlist 1,4,$^)
+$(CLIM_FILES): $(MAKE_CLIM_VARS_SRC) $(SEASONS) $(PLOT_THEME_FILE) $(USSES_CLIM_FILES)
+	./$<
 	
 $(VWC_FILES): $(AGGREGATE_VWC_SRC) $(DAILY_SW_TREAT_FILE) $(PLOT_THEME_FILE)  
 	./$<

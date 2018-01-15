@@ -15,30 +15,20 @@ library(lme4)
 library(zoo)
 library(stringr)
 
+output_dir <- file.path( 'data', 'temp_data')
+data_dir <- file.path( 'lib', 'USSES_climate', 'data')
+season_tab <- file.path(data_dir, 'season_table.csv')
+figure_theme <- file.path('figures', 'my_plotting_theme.Rdata')
+old_climate_files <- dir(file.path(data_dir, 'climate'), pattern = 'Zachman', full.names = T) # Climate Data from Ecological Archives 
+station_fl <- file.path(data_dir, 'climate', 'USSES_climate_monthly_new.csv')
+daily_station_fl <- file.path( data_dir, 'climate', 'USSES_climate.csv')
 
-args = commandArgs(trailingOnly=TRUE)
-
-# test if there is at least one argument: if not, return an error
-if (length(args)!=4) {
-  stop("Supply location of 'driversdata' directory, season table, and plot theme and output dir", call.=FALSE)
-} else if (length(args)==4) {
-  # default output file
-  input_dir <- args[1]
-  season_tab <- args[2]
-  figure_theme <- args[3]
-  output_dir <- args[4]
-}
-
-# ----- read in drivers data data ------------------------------------------------------------#
-dataDir1 <- file.path(input_dir, 'data', 'idaho_modern', 'climateData')
-
-old_climate_files <- dir( dataDir1, pattern = 'Zachman', full.names = T) # Climate Data from Ecological Archives 
+# ----- read in data ------------------------------------------------------------#
 old_station_dat <- lapply(old_climate_files, read.csv)
-station_dat <- read.csv(file.path(dataDir1, 'USSES_climate_monthly_new.csv'))
-
-# ----- local data -------------------------------------------- # 
+station_dat <- read.csv(station_fl)
 load(figure_theme)
 season <- read.csv(season_tab)
+station_dat_daily <- read.csv(daily_station_fl)
 
 # --------------------------------------------------------------- # 
 
@@ -224,8 +214,6 @@ annual_clim <- left_join( annual_clim, periods )
 # --------monthly from daily ------------------------------------------------------------------# 
 
 # aggregate daily to monthly for Peter
-
-station_dat_daily <- read.csv(file.path( dataDir1, 'USSES_climate.csv'))
 station_dat_daily$date <- as.POSIXct( strptime( station_dat_daily$DATE, format = '%Y%m%d', tz = 'MST')    )
 
 station_dat_daily <- station_dat_daily %>% dplyr::select( date, STATION, STATION_NAME, PRCP, TMAX, TMIN )  
