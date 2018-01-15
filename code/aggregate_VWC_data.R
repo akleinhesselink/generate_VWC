@@ -15,25 +15,15 @@ library(lme4)
 library(zoo)
 library(stringr)
 
-args = commandArgs(trailingOnly=TRUE)
-
-# test if there is at least one argument: if not, return an error
-if (length(args)!=2) {
-  stop("Supply location daily_swVWC_treatment data and plotting theme", call.=FALSE)
-} else if (length(args)==2) {
-  # default output file
-  VWC_file <- args[1]
-  plot_theme <- args[2]
-}
-
-
+fig_dir <- 'figures'
+VWC_file <- file.path( 'data', 'temp_data', 'daily_SOILWAT_VWC_treatments.csv')
+plot_theme <- file.path( fig_dir, 'my_plotting_theme.Rdata')
+temp_dir <- dirname(VWC_file) 
 # ----- read in data --------------------------------------------------------------------#
-load(plot_theme)
 
 VWC <- read.csv(VWC_file)
+load(plot_theme)
 
-climate_dir <- dirname(VWC_file) 
-fig_dir <- 'figures'
 # make time periods --------------------------------------------------------------------
 
 p1 <- data.frame( Period = 'Modern', year = 2007:2016)
@@ -94,9 +84,9 @@ quarterly_VWC <-
 
 # -------- output -----------------------------------------------------------------------------#
 
-write.csv( seasonal_VWC, file.path(climate_dir, 'seasonal_VWC.csv'), row.names= F)
-write.csv( quarterly_VWC, file.path(climate_dir, 'quarterly_VWC.csv'), row.names= F)
-write.csv( annual_VWC, file.path(climate_dir, 'annual_VWC.csv'), row.names= F)
+write.csv( seasonal_VWC, file.path(temp_dir, 'seasonal_VWC.csv'), row.names= F)
+write.csv( quarterly_VWC, file.path(temp_dir, 'quarterly_VWC.csv'), row.names= F)
+write.csv( annual_VWC, file.path(temp_dir, 'annual_VWC.csv'), row.names= F)
 
 # ------- Some figure output need to move to a separate script ---------------------------------# 
 
