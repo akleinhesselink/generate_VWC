@@ -12,23 +12,24 @@ library(texreg)
 
 load('figures/my_plotting_theme.Rdata')
 
-soil_moist_dir <- '~/driversdata/data/idaho_modern/soil_moisture_data/data/'
-q_info <-read.csv(paste0(soil_moist_dir, '../../quad_info.csv') )
+raw_soil_dir <- file.path ('lib', 'USSES_climate', 'data', 'raw_soil_data')
+raw_spot_dir <- file.path( raw_soil_dir, 'spot_measurements')
+q_info <- read.csv(file.path('lib', 'USSES_climate', 'data', 'quad_info.csv'))
 
-calibration <- read.csv(paste0(soil_moist_dir, 'raw_soil_data/spot_measurements/2015-05-07_soil_probe_calibration.csv'))
-calibration2 <- read.csv(paste0(soil_moist_dir, 'raw_soil_data/spot_measurements/2015-04-29_soil_probe_calibration.csv'), skip = 8)
+calibration <- read.csv(file.path(raw_spot_dir, '2015-05-07_soil_probe_calibration.csv'))
+calibration2 <- read.csv(file.path(raw_spot_dir, '2015-04-29_soil_probe_calibration.csv'), skip = 8)
 
-p1 <- read.csv(paste0( soil_moist_dir, 'raw_soil_data/spot_measurements/2012-06-06_spot_measurements.csv'), skip = 3)
+p1 <- read.csv(file.path( raw_spot_dir, '2012-06-06_spot_measurements.csv'), skip = 3)
 
 p1$date <- '2012-06-06'
 p1$Plot <- gsub( p1$Plot, pattern = '-', replacement = '_')
 p1$rep <- c(1:2)
 p1 <- p1 %>% rename( plot = Plot )
 
-p2 <- read.csv(paste0(soil_moist_dir, 'raw_soil_data/spot_measurements/2015-04-29_spot_measurements.csv'), skip = 2)
-p3 <- read.csv(paste0(soil_moist_dir, 'raw_soil_data/spot_measurements/2015-05-07_spot_measurements.csv'))
-p4 <- read.csv(paste0(soil_moist_dir, 'raw_soil_data/spot_measurements/2016-05-10_spot_measurements.csv'))
-p5 <- read.csv(paste0(soil_moist_dir, 'raw_soil_data/spot_measurements/2015-06-09_spot_measurements.csv'))
+p2 <- read.csv(file.path(raw_spot_dir, '2015-04-29_spot_measurements.csv'), skip = 2)
+p3 <- read.csv(file.path(raw_spot_dir, '2015-05-07_spot_measurements.csv'))
+p4 <- read.csv(file.path(raw_spot_dir, '2016-05-10_spot_measurements.csv'))
+p5 <- read.csv(file.path(raw_spot_dir, '2015-06-09_spot_measurements.csv'))
 
 p2$date <- '2015-04-29'
 
@@ -45,7 +46,7 @@ df <- merge (df, q_info , by = 'plot')
 df$date <- as.POSIXct(df$date, tz = 'MST')
 df <- df %>% rename(VWC = PCT)
 
-soil_density <- read.csv(paste0(soil_moist_dir, 'raw_soil_data/gravimetric_samples/exclosure_soil_samples.csv'))
+soil_density <- read.csv(file.path(raw_soil_dir, 'gravimetric_samples', 'exclosure_soil_samples.csv'))
 
 soil_density <- soil_density %>% 
   mutate( layer = ifelse( depth > 15, 'deep', 'shallow') ) %>% 
@@ -124,9 +125,9 @@ aggregate(data = df, VWC ~ Treatment, FUN = 'mean')
 # make table for stats output 
 library(xtable)
 library(lsmeans)
-statsOutput <- 'data/temp_data/spot_measurements.tex'
+statsOutput <- file.path( 'data', 'temp_data', 'spot_measurements.tex')
 
-test <- lsmeans(spot_m , "Treatment" )
+test <- lsmeans::lsmeans(spot_m , "Treatment" )
 
 #xtlsm_spot <- xtable(test, caption = '')
 #print(xtlsm_spot, )
@@ -136,7 +137,6 @@ texreg(spot_m,caption="Estimated parameters from a mixed effects model fit to th
 
 
 aggregate( data = df, VWC ~ Treatment, FUN = 'mean')
-
 
 # print figures --------------------------------------------------------------------------------------------------------
 
