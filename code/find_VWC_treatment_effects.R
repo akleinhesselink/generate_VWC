@@ -215,6 +215,7 @@ swVWC <-
   gather(layer, VWC, Lyr_1:Lyr_6) %>% 
   filter( layer %in% c('Lyr_1', 'Lyr_2', 'Lyr_3', 'Lyr_4'))
 
+# aggregated soilwat by depth -------------- 
 swVWC <- swVWC %>% 
   group_by( date) %>% 
   summarise( modelVWC = mean(VWC)*100 )

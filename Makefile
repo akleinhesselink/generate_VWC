@@ -1,4 +1,3 @@
-#include config.mk
 # project directory
 DATA=data
 CODE=code
@@ -105,4 +104,4 @@ variables: Makefile
 ## help		: Help Menu
 .PHONY: help
 help: Makefile
-	@sed -n 's/^##//p' $<
+	@sed -n 's/^  ##//p' $<
